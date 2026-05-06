@@ -3,7 +3,7 @@ services:
     name: elo-arc
     env: node
     region: oregon
-    buildCommand: cd client && npm install && npm run build && cd ../server && npm install
+    buildCommand: npm install && npm run build && cd server && npm install
     startCommand: node server/server.js
     envVars:
       - key: NODE_ENV
