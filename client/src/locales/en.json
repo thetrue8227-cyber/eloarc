@@ -1,0 +1,184 @@
+{
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "login": "Log in",
+    "start_free": "Start free"
+  },
+  "hero": {
+    "tagline": "Your Chess. Evolved.",
+    "subtitle": "The first continuous AI coaching system that learns your game and evolves with you",
+    "cta_primary": "Start for free",
+    "cta_secondary": "View plans"
+  },
+  "how_it_works": {
+    "title": "How it works",
+    "step1_title": "Play or import your game",
+    "step1_desc": "Paste a PGN or play directly against our engine. All formats supported.",
+    "step2_title": "AI identifies your patterns",
+    "step2_desc": "Our AI analyzes every move and identifies your recurring mistakes by category.",
+    "step3_title": "Get your personalized plan",
+    "step3_desc": "Receive a training plan that auto-updates after every game you play."
+  },
+  "comparison": {
+    "title": "Why Elo Arc?",
+    "feature": "Feature",
+    "coaching_continuous": "Continuous coaching",
+    "evolving_profile": "Evolving player profile",
+    "personalized_plan": "Personalized weekly plan",
+    "ai_coach": "Contextual AI coach",
+    "yes": "✓",
+    "no": "✗"
+  },
+  "testimonials": {
+    "title": "What our users say",
+    "t1_name": "Rafael M.",
+    "t1_role": "ELO 1450 player",
+    "t1_text": "My ELO went up 120 points in 2 months. The personalized training plan was a game changer.",
+    "t2_name": "Ana C.",
+    "t2_role": "Competitive chess player",
+    "t2_text": "I finally understood why I kept losing closed positions. The profile analysis is incredible.",
+    "t3_name": "Marcos T.",
+    "t3_role": "Casual player",
+    "t3_text": "The AI coach knows exactly what my mistakes were in recent games. It's like having a GM by your side."
+  },
+  "pricing": {
+    "title": "Choose your plan",
+    "subtitle": "Start free. Evolve without limits.",
+    "monthly": "/mo",
+    "most_popular": "Most Popular",
+    "free_title": "Free",
+    "rising_title": "Rising",
+    "elite_title": "Elite",
+    "arc_master_title": "Arc Master",
+    "cta_free": "Start for free",
+    "cta_rising": "Evolve now",
+    "cta_elite": "Go Elite",
+    "cta_arc_master": "Master the game"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "auth": {
+    "login": "Log in",
+    "register": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Full name",
+    "forgot_password": "Forgot password?",
+    "no_account": "Don't have an account?",
+    "has_account": "Already have an account?",
+    "or": "or",
+    "submit_login": "Log in",
+    "submit_register": "Create account",
+    "reset_password": "Reset password",
+    "reset_sent": "Check your email for the reset link."
+  },
+  "dashboard": {
+    "overview": "Overview",
+    "analyze": "Analyze Game",
+    "play": "Play vs Engine",
+    "profile": "My Profile",
+    "training": "Training Plan",
+    "history": "History",
+    "coach": "AI Coach",
+    "settings": "Settings"
+  },
+  "overview": {
+    "games_analyzed": "Games analyzed",
+    "top_error": "Most frequent error",
+    "streak": "Training streak",
+    "estimated_elo": "Estimated ELO",
+    "weekly_focus": "This week's focus",
+    "recent_games": "Recent analyzed games",
+    "see_details": "See details"
+  },
+  "analyze": {
+    "title": "Analyze Game",
+    "paste_pgn": "Paste the game PGN here...",
+    "analyze_btn": "Analyze with AI",
+    "analyzing": "Analyzing...",
+    "errors_found": "Errors found",
+    "summary": "General summary",
+    "update_plan": "Update my training plan",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "category_opening": "Opening",
+    "category_tactics": "Tactics",
+    "category_positional": "Positional",
+    "category_endgame": "Endgame"
+  },
+  "play": {
+    "title": "Play vs Engine",
+    "difficulty": "Difficulty (ELO)",
+    "color": "Play as",
+    "white": "White",
+    "black": "Black",
+    "start": "Start game",
+    "resign": "Resign",
+    "new_game": "New game",
+    "game_over": "Game over",
+    "you_win": "You win!",
+    "you_lose": "You lost.",
+    "draw": "Draw!"
+  },
+  "profile": {
+    "title": "My Player Profile",
+    "dimensions": {
+      "abertura": "Opening",
+      "tatica": "Tactics",
+      "posicional": "Positional",
+      "final": "Endgame",
+      "tempo": "Time Management",
+      "consistencia": "Consistency"
+    },
+    "vs_last_month": "vs. last month",
+    "generate_text": "Regenerate profile analysis",
+    "no_games": "Analyze games to generate your evolving profile."
+  },
+  "training": {
+    "title": "Training Plan",
+    "current_focus": "This week's focus",
+    "themes": "Topics to study",
+    "exercises": "Exercises",
+    "regenerate": "Regenerate plan",
+    "practice_lichess": "Practice on Lichess",
+    "history_title": "Previous plans",
+    "no_plan": "Analyze your first game to generate a personalized training plan."
+  },
+  "chat": {
+    "title": "AI Coach",
+    "placeholder": "Ask about your game, a concept, or your progress...",
+    "send": "Send",
+    "clear": "Clear chat",
+    "limit_warning": "You've reached your plan's message limit this month.",
+    "upgrade_prompt": "Upgrade to Rising or higher to unlock chat."
+  },
+  "history": {
+    "title": "Game History",
+    "no_games": "No games analyzed yet.",
+    "analyze_first": "Analyze your first game",
+    "delete": "Delete",
+    "view": "View analysis"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "name": "Name",
+    "email": "Email",
+    "language": "Language",
+    "plan": "Current plan",
+    "manage_subscription": "Manage subscription",
+    "save": "Save changes",
+    "saved": "Saved!"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "limit_reached": "Plan limit reached. Upgrade to continue.",
+    "invalid_pgn": "Invalid PGN. Please check the format."
+  },
+  "days": "days"
+}

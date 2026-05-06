@@ -1,0 +1,29 @@
+<svg width="220" height="55" viewBox="0 0 220 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="220" y2="55" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#10B981"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Knight icon (simplified chess knight silhouette) -->
+  <g transform="translate(4, 4)">
+    <!-- Head/face -->
+    <path d="M24 6 C20 6 16 8 14 11 C12 14 12 17 13 19 C10 20 8 22 8 25 C8 28 10 30 12 31 L12 38 C12 39 13 40 14 40 L32 40 C33 40 34 39 34 38 L34 35 C36 33 37 31 37 28 C37 24 35 21 32 19 L32 17 C34 16 35 14 35 12 C35 9 33 7 30 6 Z"
+      fill="url(#grad)" opacity="0.15"/>
+    <!-- Knight outline - stylized -->
+    <path d="M26 8 C23 8 20 9 18 12 L16 15 C14 15 12 17 12 19 C12 21 13 22 14 23 L14 38 L34 38 L34 35 C36 33 36 30 36 28 C36 24 33 21 30 19 L30 16 C32 15 33 13 33 11 C33 9 30 8 26 8 Z"
+      fill="none" stroke="url(#grad)" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Eye -->
+    <circle cx="22" cy="14" r="1.5" fill="url(#grad)"/>
+    <!-- Mane detail -->
+    <path d="M28 12 C30 11 32 12 32 14" stroke="url(#grad)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Nostril -->
+    <path d="M16 20 C17 19 18 19 19 20" stroke="url(#grad)" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Base line -->
+    <rect x="10" y="38" width="26" height="3" rx="1.5" fill="url(#grad)"/>
+  </g>
+
+  <!-- "Elo Arc" text -->
+  <text x="58" y="37" font-family="'Sora', 'Inter', sans-serif" font-weight="800" font-size="28" fill="url(#grad)" letter-spacing="-0.5">Elo Arc</text>
+</svg>

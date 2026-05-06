@@ -1,0 +1,184 @@
+{
+  "nav": {
+    "features": "Recursos",
+    "pricing": "Planos",
+    "login": "Entrar",
+    "start_free": "Começar grátis"
+  },
+  "hero": {
+    "tagline": "Your Chess. Evolved.",
+    "subtitle": "O primeiro sistema de coaching contínuo por IA que aprende o seu jogo e evolui com você",
+    "cta_primary": "Começar grátis",
+    "cta_secondary": "Ver planos"
+  },
+  "how_it_works": {
+    "title": "Como funciona",
+    "step1_title": "Jogue ou importe sua partida",
+    "step1_desc": "Cole um PGN ou jogue diretamente contra nossa engine. Suportamos todos os formatos.",
+    "step2_title": "A IA identifica seus padrões",
+    "step2_desc": "Nossa IA analisa cada lance e identifica seus erros recorrentes por categoria.",
+    "step3_title": "Receba seu plano personalizado",
+    "step3_desc": "Obtenha um plano de treino que se atualiza automaticamente a cada partida."
+  },
+  "comparison": {
+    "title": "Por que Elo Arc?",
+    "feature": "Recurso",
+    "coaching_continuous": "Coaching contínuo",
+    "evolving_profile": "Perfil evolutivo de jogador",
+    "personalized_plan": "Plano semanal personalizado",
+    "ai_coach": "Coach IA contextual",
+    "yes": "✓",
+    "no": "✗"
+  },
+  "testimonials": {
+    "title": "O que nossos usuários dizem",
+    "t1_name": "Rafael M.",
+    "t1_role": "Jogador ELO 1450",
+    "t1_text": "Em 2 meses meu ELO subiu 120 pontos. O plano de treino personalizado foi um divisor de águas.",
+    "t2_name": "Ana C.",
+    "t2_role": "Enxadrista competitiva",
+    "t2_text": "Finalmente entendi por que perdia tantas posições fechadas. A análise de perfil é incrível.",
+    "t3_name": "Marcos T.",
+    "t3_role": "Jogador casual",
+    "t3_text": "O coach IA sabe exatamente quais foram meus erros nas últimas partidas. É como ter um GM do seu lado."
+  },
+  "pricing": {
+    "title": "Escolha seu plano",
+    "subtitle": "Comece grátis. Evolua sem limites.",
+    "monthly": "/mês",
+    "most_popular": "Mais Popular",
+    "free_title": "Free",
+    "rising_title": "Rising",
+    "elite_title": "Elite",
+    "arc_master_title": "Arc Master",
+    "cta_free": "Começar grátis",
+    "cta_rising": "Evoluir agora",
+    "cta_elite": "Ir para Elite",
+    "cta_arc_master": "Dominar o jogo"
+  },
+  "footer": {
+    "rights": "Todos os direitos reservados",
+    "privacy": "Privacidade",
+    "terms": "Termos"
+  },
+  "auth": {
+    "login": "Entrar",
+    "register": "Criar conta",
+    "email": "E-mail",
+    "password": "Senha",
+    "name": "Nome completo",
+    "forgot_password": "Esqueceu a senha?",
+    "no_account": "Não tem conta?",
+    "has_account": "Já tem conta?",
+    "or": "ou",
+    "submit_login": "Entrar",
+    "submit_register": "Criar conta",
+    "reset_password": "Redefinir senha",
+    "reset_sent": "Verifique seu e-mail para o link de redefinição."
+  },
+  "dashboard": {
+    "overview": "Visão Geral",
+    "analyze": "Analisar Partida",
+    "play": "Jogar contra Engine",
+    "profile": "Meu Perfil",
+    "training": "Plano de Treino",
+    "history": "Histórico",
+    "coach": "Coach IA",
+    "settings": "Configurações"
+  },
+  "overview": {
+    "games_analyzed": "Partidas analisadas",
+    "top_error": "Erro mais frequente",
+    "streak": "Sequência de treino",
+    "estimated_elo": "ELO estimado",
+    "weekly_focus": "Foco desta semana",
+    "recent_games": "Últimas partidas analisadas",
+    "see_details": "Ver detalhes"
+  },
+  "analyze": {
+    "title": "Analisar Partida",
+    "paste_pgn": "Cole o PGN da partida aqui...",
+    "analyze_btn": "Analisar com IA",
+    "analyzing": "Analisando...",
+    "errors_found": "Erros encontrados",
+    "summary": "Resumo geral",
+    "update_plan": "Atualizar meu plano de treino",
+    "low": "Leve",
+    "medium": "Médio",
+    "high": "Grave",
+    "category_opening": "Abertura",
+    "category_tactics": "Tática",
+    "category_positional": "Posicional",
+    "category_endgame": "Final"
+  },
+  "play": {
+    "title": "Jogar contra Engine",
+    "difficulty": "Dificuldade (ELO)",
+    "color": "Jogar com",
+    "white": "Brancas",
+    "black": "Pretas",
+    "start": "Iniciar partida",
+    "resign": "Resignar",
+    "new_game": "Nova partida",
+    "game_over": "Partida encerrada",
+    "you_win": "Você venceu!",
+    "you_lose": "Você perdeu.",
+    "draw": "Empate!"
+  },
+  "profile": {
+    "title": "Meu Perfil de Jogador",
+    "dimensions": {
+      "abertura": "Abertura",
+      "tatica": "Tática",
+      "posicional": "Posicional",
+      "final": "Final de Jogo",
+      "tempo": "Gestão de Tempo",
+      "consistencia": "Consistência"
+    },
+    "vs_last_month": "vs. mês anterior",
+    "generate_text": "Regenerar análise de perfil",
+    "no_games": "Analise partidas para gerar seu perfil evolutivo."
+  },
+  "training": {
+    "title": "Plano de Treino",
+    "current_focus": "Foco da semana",
+    "themes": "Temas para estudar",
+    "exercises": "Exercícios",
+    "regenerate": "Regenerar plano",
+    "practice_lichess": "Praticar no Lichess",
+    "history_title": "Planos anteriores",
+    "no_plan": "Analise sua primeira partida para gerar um plano de treino personalizado."
+  },
+  "chat": {
+    "title": "Coach IA",
+    "placeholder": "Pergunte sobre sua partida, um conceito ou seu progresso...",
+    "send": "Enviar",
+    "clear": "Limpar conversa",
+    "limit_warning": "Você atingiu o limite de mensagens do seu plano este mês.",
+    "upgrade_prompt": "Upgrade para Rising ou superior para desbloquear o chat."
+  },
+  "history": {
+    "title": "Histórico de Partidas",
+    "no_games": "Nenhuma partida analisada ainda.",
+    "analyze_first": "Analisar primeira partida",
+    "delete": "Excluir",
+    "view": "Ver análise"
+  },
+  "settings": {
+    "title": "Configurações",
+    "account": "Conta",
+    "name": "Nome",
+    "email": "E-mail",
+    "language": "Idioma",
+    "plan": "Plano atual",
+    "manage_subscription": "Gerenciar assinatura",
+    "save": "Salvar alterações",
+    "saved": "Salvo!"
+  },
+  "errors": {
+    "generic": "Algo deu errado. Tente novamente.",
+    "limit_reached": "Limite do plano atingido. Faça upgrade para continuar.",
+    "invalid_pgn": "PGN inválido. Verifique o formato."
+  },
+  "days": "dias"
+}

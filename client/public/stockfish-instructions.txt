@@ -1,0 +1,8 @@
+Download stockfish.js (WebAssembly build) from:
+https://github.com/nmrugg/stockfish.js/releases
+
+Place stockfish.js and stockfish.wasm in this /public directory.
+The PlayEngine page loads it as a Web Worker from /stockfish.js.
+
+Quick install:
+  npm install stockfish  (then copy node_modules/stockfish/src/stockfish.js to public/)
