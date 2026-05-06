@@ -3,15 +3,18 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 const { initDB } = require('./db');
 
 const app = express();
 
-app.use(helmet());
-app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true,
-}));
+const isProd = process.env.NODE_ENV === 'production';
+
+app.use(helmet({ contentSecurityPolicy: false }));
+
+if (!isProd) {
+  app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
+}
 
 // Stripe webhook needs raw body
 app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
@@ -30,6 +33,13 @@ app.use('/api/profile', require('./routes/profile'));
 app.use('/api/pdf', require('./routes/pdf'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+
+// Serve React frontend in production
+if (isProd) {
+  const clientDist = path.join(__dirname, '../client/dist');
+  app.use(express.static(clientDist));
+  app.get('*', (req, res) => res.sendFile(path.join(clientDist, 'index.html')));
+}
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
