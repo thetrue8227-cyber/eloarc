@@ -11,24 +11,37 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+let refreshPromise = null;
+
+function refreshAccessToken() {
+  if (refreshPromise) return refreshPromise;
+  const refresh_token = localStorage.getItem('refresh_token');
+  if (!refresh_token) return Promise.reject(new Error('no_refresh_token'));
+  refreshPromise = axios.post('/api/auth/refresh', { refresh_token })
+    .then(({ data }) => {
+      localStorage.setItem('access_token', data.access_token);
+      return data.access_token;
+    })
+    .finally(() => { refreshPromise = null; });
+  return refreshPromise;
+}
+
 api.interceptors.response.use(
   (res) => res,
   async (err) => {
     const original = err.config;
-    if (err.response?.status === 401 && !original._retry) {
+    if (!original || original._retry) return Promise.reject(err);
+
+    if (err.response?.status === 401) {
       original._retry = true;
-      const refresh_token = localStorage.getItem('refresh_token');
-      if (refresh_token) {
-        try {
-          const { data } = await axios.post('/api/auth/refresh', { refresh_token });
-          localStorage.setItem('access_token', data.access_token);
-          original.headers.Authorization = `Bearer ${data.access_token}`;
-          return api(original);
-        } catch {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          window.location.href = '/login';
-        }
+      try {
+        const newToken = await refreshAccessToken();
+        original.headers.Authorization = `Bearer ${newToken}`;
+        return api(original);
+      } catch {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.dispatchEvent(new CustomEvent('auth:unauthorized'));
       }
     }
     return Promise.reject(err);

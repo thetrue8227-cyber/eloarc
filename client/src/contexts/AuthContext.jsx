@@ -17,13 +17,24 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (!token) { setLoading(false); return; }
+    const access = localStorage.getItem('access_token');
+    const refresh = localStorage.getItem('refresh_token');
+    if (!access && !refresh) { setLoading(false); return; }
     api.get('/auth/me')
       .then(({ data }) => applyUser(data.user))
-      .catch(() => localStorage.removeItem('access_token'))
+      .catch(() => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        setUser(null);
+      })
       .finally(() => setLoading(false));
   }, [applyUser]);
+
+  useEffect(() => {
+    const handleUnauthorized = () => setUser(null);
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+  }, []);
 
   const login = async (email, password) => {
     const { data } = await api.post('/auth/login', { email, password });
