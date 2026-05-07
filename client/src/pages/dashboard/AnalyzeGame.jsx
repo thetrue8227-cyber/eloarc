@@ -7,17 +7,18 @@ import api from '../../services/api';
 import toast from 'react-hot-toast';
 import { Search, ChevronDown, ChevronUp, Repeat2, CheckCircle, SkipBack, ChevronLeft, ChevronRight, SkipForward, Play, Pause } from 'lucide-react';
 
-const SEVERITY = {
-  inaccuracy:       { label: 'Imprecisão',   bg: 'rgba(0,229,160,0.08)',  border: 'rgba(0,229,160,0.25)',  color: '#00E5A0' },
-  mistake:          { label: 'Erro',          bg: 'rgba(255,213,0,0.08)',  border: 'rgba(255,213,0,0.3)',   color: '#FFD500' },
-  blunder:          { label: 'Erro grave',    bg: 'rgba(255,140,0,0.08)', border: 'rgba(255,140,0,0.3)',   color: '#FF8C00' },
-  critical_blunder: { label: 'Erro decisivo', bg: 'rgba(255,77,79,0.08)', border: 'rgba(255,77,79,0.3)',   color: '#FF4D4F' },
-  low:    { label: 'Imprecisão',   bg: 'rgba(0,229,160,0.08)',  border: 'rgba(0,229,160,0.25)',  color: '#00E5A0' },
-  medium: { label: 'Erro',         bg: 'rgba(255,213,0,0.08)',  border: 'rgba(255,213,0,0.3)',   color: '#FFD500' },
-  high:   { label: 'Erro decisivo',bg: 'rgba(255,77,79,0.08)', border: 'rgba(255,77,79,0.3)',   color: '#FF4D4F' },
+const SEVERITY_KEY = {
+  inaccuracy: 'low', mistake: 'medium', blunder: 'blunder', critical_blunder: 'high',
+  low: 'low', medium: 'medium', high: 'high',
+};
+const SEVERITY_STYLE = {
+  low:     { bg: 'rgba(0,229,160,0.08)',  border: 'rgba(0,229,160,0.25)',  color: '#00E5A0' },
+  medium:  { bg: 'rgba(255,213,0,0.08)',  border: 'rgba(255,213,0,0.3)',   color: '#FFD500' },
+  blunder: { bg: 'rgba(255,140,0,0.08)',  border: 'rgba(255,140,0,0.3)',   color: '#FF8C00' },
+  high:    { bg: 'rgba(255,77,79,0.08)',  border: 'rgba(255,77,79,0.3)',   color: '#FF4D4F' },
 };
 const CAT_COLORS = { opening: '#7C6AF7', tactics: '#FF6B6B', positional: '#FFD700', endgame: '#00E5A0' };
-const CAT_LABELS = { opening: 'Abertura', tactics: 'Tática', positional: 'Posicional', endgame: 'Final' };
+const CAT_LABEL_KEY = { opening: 'category_opening', tactics: 'category_tactics', positional: 'category_positional', endgame: 'category_endgame' };
 const WEEK_COLORS = ['#7C6AF7', '#00E5A0', '#FFD700', '#FF6B6B'];
 
 // Build list of FENs from a PGN
@@ -39,26 +40,29 @@ function buildFens(pgn) {
 }
 
 function ErrorCard({ err, index, onJumpToMove }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
-  const sev = SEVERITY[err.gravidade] || SEVERITY.low;
+  const sevKey = SEVERITY_KEY[err.gravidade] || 'low';
+  const sev = SEVERITY_STYLE[sevKey];
+  const sevLabel = t(`analyze.${sevKey}`);
   const moveNum = parseInt(err.lance);
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.04 }}
       style={{ background: sev.bg, border: `1px solid ${sev.border}`, borderRadius: 12, overflow: 'hidden' }}>
       <button onClick={() => setOpen(o => !o)} style={{ width: '100%', padding: '11px 14px', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, textAlign: 'left' }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: sev.color, fontFamily: 'Inter', textTransform: 'uppercase', letterSpacing: 0.5, flexShrink: 0 }}>{sev.label}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: sev.color, fontFamily: 'Inter', textTransform: 'uppercase', letterSpacing: 0.5, flexShrink: 0 }}>{sevLabel}</span>
         {err.categoria && (
           <span style={{ fontSize: 11, background: `${CAT_COLORS[err.categoria]}22`, color: CAT_COLORS[err.categoria], borderRadius: 6, padding: '2px 7px', fontFamily: 'Inter', flexShrink: 0 }}>
-            {CAT_LABELS[err.categoria] || err.categoria}
+            {CAT_LABEL_KEY[err.categoria] ? t(`analyze.${CAT_LABEL_KEY[err.categoria]}`) : err.categoria}
           </span>
         )}
-        {err.lance && <span style={{ fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', flexShrink: 0 }}>Lance {err.lance}</span>}
+        {err.lance && <span style={{ fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', flexShrink: 0 }}>#{err.lance}</span>}
         {err.recorrente && <Repeat2 size={11} color="#FF8C00" style={{ flexShrink: 0 }} />}
         {onJumpToMove && moveNum && (
           <button onClick={e => { e.stopPropagation(); onJumpToMove(moveNum); }}
             style={{ marginLeft: 'auto', fontSize: 10, color: '#7C6AF7', background: 'rgba(124,106,247,0.1)', border: '1px solid rgba(124,106,247,0.3)', borderRadius: 6, padding: '2px 8px', cursor: 'pointer', fontFamily: 'Inter', flexShrink: 0 }}>
-            ver no tabuleiro
+            {t('analyze.view_on_board')}
           </button>
         )}
         <span style={{ color: '#7A7A9A', flexShrink: 0, marginLeft: onJumpToMove && moveNum ? 0 : 'auto' }}>{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
@@ -71,13 +75,13 @@ function ErrorCard({ err, index, onJumpToMove }) {
                 <div style={{ display: 'flex', gap: 10, marginBottom: 10 }}>
                   {err.movimento_jogado && (
                     <div style={{ flex: 1, background: 'rgba(255,77,79,0.08)', border: '1px solid rgba(255,77,79,0.2)', borderRadius: 8, padding: '7px 10px' }}>
-                      <div style={{ fontSize: 10, color: '#FF4D4F', fontFamily: 'Inter', fontWeight: 600, marginBottom: 2 }}>JOGADO</div>
+                      <div style={{ fontSize: 10, color: '#FF4D4F', fontFamily: 'Inter', fontWeight: 600, marginBottom: 2 }}>{t('analyze.played')}</div>
                       <div style={{ fontFamily: 'monospace', fontSize: 16, fontWeight: 700, color: '#EFEFEF' }}>{err.movimento_jogado}</div>
                     </div>
                   )}
                   {err.movimento_correto && (
                     <div style={{ flex: 1, background: 'rgba(0,229,160,0.08)', border: '1px solid rgba(0,229,160,0.2)', borderRadius: 8, padding: '7px 10px' }}>
-                      <div style={{ fontSize: 10, color: '#00E5A0', fontFamily: 'Inter', fontWeight: 600, marginBottom: 2 }}>MELHOR</div>
+                      <div style={{ fontSize: 10, color: '#00E5A0', fontFamily: 'Inter', fontWeight: 600, marginBottom: 2 }}>{t('analyze.best')}</div>
                       <div style={{ fontFamily: 'monospace', fontSize: 16, fontWeight: 700, color: '#EFEFEF' }}>{err.movimento_correto}</div>
                     </div>
                   )}
@@ -95,6 +99,7 @@ function ErrorCard({ err, index, onJumpToMove }) {
 }
 
 function WeekCard({ data, index }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(index === 0);
   const color = WEEK_COLORS[index];
   return (
@@ -104,7 +109,7 @@ function WeekCard({ data, index }) {
           {index + 1}
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 1 }}>Semana {index + 1}</div>
+          <div style={{ fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 1 }}>{t('analyze.week')} {index + 1}</div>
           <div style={{ fontSize: 13, fontFamily: 'Sora', fontWeight: 600, color: '#EFEFEF' }}>{data?.tema}</div>
         </div>
         <span style={{ color: '#7A7A9A' }}>{open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}</span>
@@ -126,7 +131,7 @@ function WeekCard({ data, index }) {
               ))}
               {data?.checkpoint && (
                 <div style={{ marginTop: 6, padding: '7px 10px', background: `${color}10`, border: `1px solid ${color}30`, borderRadius: 8, fontSize: 12, color, fontFamily: 'Inter' }}>
-                  Checkpoint: {data.checkpoint}
+                  {t('analyze.checkpoint')}: {data.checkpoint}
                 </div>
               )}
             </div>
@@ -139,6 +144,7 @@ function WeekCard({ data, index }) {
 
 // Interactive board component
 function GameBoard({ pgn, errors, jumpTarget }) {
+  const { t } = useTranslation();
   const { fens, moves } = buildFens(pgn);
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -216,7 +222,7 @@ function GameBoard({ pgn, errors, jumpTarget }) {
       {isErrorMove && (
         <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
           style={{ padding: '6px 12px', borderRadius: 8, background: isBlunder ? 'rgba(255,77,79,0.1)' : 'rgba(255,213,0,0.1)', border: `1px solid ${isBlunder ? 'rgba(255,77,79,0.3)' : 'rgba(255,213,0,0.3)'}`, fontSize: 12, color: isBlunder ? '#FF4D4F' : '#FFD500', fontFamily: 'Inter', fontWeight: 600, textAlign: 'center' }}>
-          {isBlunder ? '❌ Erro grave neste lance' : '⚠️ Imprecisão neste lance'}
+          {isBlunder ? t('analyze.blunder_here') : t('analyze.inaccuracy_here')}
         </motion.div>
       )}
 
@@ -284,9 +290,9 @@ export default function AnalyzeGame() {
     try {
       const { data } = await api.get('/import/preview', { params: { platform, username: username.trim() } });
       setPreviewed(data);
-      toast.success(`${data.count} partidas encontradas`);
+      toast.success(`${data.count} ${t('analyze.games_found_short')}`);
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Usuário não encontrado');
+      toast.error(err.response?.data?.error || t('analyze.user_not_found'));
     } finally { setPreviewing(false); }
   };
 
@@ -299,7 +305,7 @@ export default function AnalyzeGame() {
       const { data } = await api.post('/import/single', { pgn: selectedPgn, platform, username: username.trim() });
       setResult(data.analysis || data);
       setActivePgn(selectedPgn);
-      toast.success('Análise completa!');
+      toast.success(t('analyze.complete'));
     } catch (err) {
       toast.error(err.response?.data?.error || t('errors.generic'));
     } finally { setLoading(false); }
@@ -313,7 +319,7 @@ export default function AnalyzeGame() {
       const { data } = await api.post('/games/analyze', { pgn });
       setResult(data.analysis || data);
       setActivePgn(pgn);
-      toast.success('Análise completa!');
+      toast.success(t('analyze.complete'));
     } catch (err) {
       toast.error(err.response?.data?.message || err.response?.data?.error || t('errors.generic'));
     } finally { setLoading(false); }
@@ -335,14 +341,14 @@ export default function AnalyzeGame() {
   const TABS = [
     { id: 'lichess', label: 'Lichess' },
     { id: 'chesscom', label: 'Chess.com' },
-    { id: 'pgn', label: 'Colar PGN' },
+    { id: 'pgn', label: t('analyze.tab_pgn') },
   ];
 
   return (
     <div>
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 24 }}>
         <h1 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: 28, marginBottom: 6, color: '#EFEFEF' }}>{t('analyze.title')}</h1>
-        <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter' }}>Análise profunda com IA — erros específicos, plano de treino, projeção de ELO.</p>
+        <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter' }}>{t('dashboard.subtitle')}</p>
       </motion.div>
 
       {/* Input section */}
@@ -376,25 +382,25 @@ export default function AnalyzeGame() {
           ) : (
             <>
               <label style={{ display: 'block', fontSize: 13, color: '#7A7A9A', marginBottom: 8, fontFamily: 'Inter' }}>
-                Username no {tab === 'lichess' ? 'Lichess' : 'Chess.com'}
+                {t('analyze.username_label')} {tab === 'lichess' ? 'Lichess' : 'Chess.com'}
               </label>
               <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
                 <input value={username} onChange={e => setUsername(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && username.trim() && previewPlatform()}
-                  placeholder="ex: magnus_carlsen" className="input-field" style={{ flex: 1 }} />
+                  placeholder="magnus_carlsen" className="input-field" style={{ flex: 1 }} />
                 <button onClick={previewPlatform} disabled={previewing || !username.trim()} className="btn-secondary" style={{ padding: '0 16px', fontSize: 13 }}>
-                  {previewing ? '...' : 'Buscar'}
+                  {previewing ? '...' : t('analyze.find_games')}
                 </button>
               </div>
               {previewed && (
                 <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
                   <div style={{ padding: '10px 12px', background: 'rgba(0,229,160,0.06)', border: '1px solid rgba(0,229,160,0.2)', borderRadius: 10, marginBottom: 12 }}>
                     <div style={{ fontSize: 13, color: '#00E5A0', fontFamily: 'Inter', fontWeight: 600 }}>
-                      {previewed.count} partidas — analisaremos a mais recente
+                      {t('analyze.games_found', { count: previewed.count })}
                     </div>
                   </div>
                   <button onClick={analyzeFromPlatform} disabled={loading} className="btn-primary" style={{ width: '100%', fontSize: 14, padding: 12 }}>
-                    {loading ? <Spinner text={t('analyze.analyzing')} /> : <><Search size={14} style={{ marginRight: 6 }} /> Analisar partida mais recente</>}
+                    {loading ? <Spinner text={t('analyze.analyzing')} /> : <><Search size={14} style={{ marginRight: 6 }} /> {t('analyze.analyze_latest')}</>}
                   </button>
                 </motion.div>
               )}
@@ -404,7 +410,7 @@ export default function AnalyzeGame() {
 
         {loading && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: 12, padding: '12px 16px', background: 'rgba(124,106,247,0.07)', borderRadius: 12, border: '1px solid rgba(124,106,247,0.2)', textAlign: 'center' }}>
-            <div style={{ fontSize: 13, color: '#7C6AF7', fontFamily: 'Inter' }}>🧠 IA analisando padrões da sua partida...</div>
+            <div style={{ fontSize: 13, color: '#7C6AF7', fontFamily: 'Inter' }}>{t('analyze.thinking')}</div>
           </motion.div>
         )}
       </motion.div>
@@ -424,13 +430,13 @@ export default function AnalyzeGame() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
               {/* General */}
               <div className="card" style={{ padding: 20, background: 'rgba(0,229,160,0.03)', border: '1px solid rgba(0,229,160,0.12)' }}>
-                <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#00E5A0', marginBottom: 8 }}>Análise geral</div>
+                <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#00E5A0', marginBottom: 8 }}>{t('analyze.general_analysis')}</div>
                 <p style={{ color: '#EFEFEF', fontSize: 13, lineHeight: 1.7, fontFamily: 'Inter', margin: 0 }}>
                   {analysis.analise_geral || analysis.resumo_geral}
                 </p>
                 {analysis.perfil_update?.elo_estimado && (
                   <div style={{ marginTop: 10, display: 'inline-block', background: 'rgba(124,106,247,0.12)', border: '1px solid rgba(124,106,247,0.3)', borderRadius: 8, padding: '3px 12px', fontSize: 13, color: '#7C6AF7', fontFamily: 'Inter', fontWeight: 600 }}>
-                    ELO estimado: {analysis.perfil_update.elo_estimado}
+                    {t('analyze.elo_estimated')}: {analysis.perfil_update.elo_estimado}
                   </div>
                 )}
               </div>
@@ -440,7 +446,7 @@ export default function AnalyzeGame() {
                 <div className="card" style={{ padding: 18 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
                     <CheckCircle size={14} color="#00E5A0" />
-                    <span style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#EFEFEF' }}>Pontos fortes</span>
+                    <span style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#EFEFEF' }}>{t('analyze.strong_points')}</span>
                   </div>
                   {pontos.map((p, i) => (
                     <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4 }}>
@@ -466,8 +472,8 @@ export default function AnalyzeGame() {
               {/* Training plan */}
               {plano && (
                 <div className="card" style={{ padding: 18 }}>
-                  <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#EFEFEF', marginBottom: 4 }}>Plano de treino</div>
-                  {plano.foco_principal && <div style={{ fontSize: 12, color: '#7C6AF7', fontFamily: 'Inter', marginBottom: 12 }}>Foco: {plano.foco_principal}</div>}
+                  <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#EFEFEF', marginBottom: 4 }}>{t('analyze.training_plan')}</div>
+                  {plano.foco_principal && <div style={{ fontSize: 12, color: '#7C6AF7', fontFamily: 'Inter', marginBottom: 12 }}>{t('analyze.focus')}: {plano.foco_principal}</div>}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
                     {['semana_1','semana_2','semana_3','semana_4'].map((wk, i) =>
                       plano[wk] ? <WeekCard key={wk} data={plano[wk]} index={i} /> : null
@@ -479,12 +485,12 @@ export default function AnalyzeGame() {
               {/* Goals */}
               {metas && (
                 <div className="card" style={{ padding: 18, background: 'rgba(124,106,247,0.04)', border: '1px solid rgba(124,106,247,0.15)' }}>
-                  <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#EFEFEF', marginBottom: 12 }}>Metas</div>
+                  <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#EFEFEF', marginBottom: 12 }}>{t('analyze.goals')}</div>
                   {metas.curto_prazo && <div style={{ fontSize: 13, color: '#EFEFEF', fontFamily: 'Inter', marginBottom: 6 }}>◆ {metas.curto_prazo}</div>}
                   {metas.medio_prazo && <div style={{ fontSize: 13, color: '#EFEFEF', fontFamily: 'Inter', marginBottom: 6 }}>◆ {metas.medio_prazo}</div>}
                   {metas.elo_previsto_60_dias && (
                     <div style={{ marginTop: 8, display: 'inline-block', background: 'rgba(124,106,247,0.12)', border: '1px solid rgba(124,106,247,0.3)', borderRadius: 8, padding: '4px 12px', fontSize: 13, color: '#7C6AF7', fontFamily: 'Inter', fontWeight: 600 }}>
-                      ELO em 60 dias: ~{metas.elo_previsto_60_dias}
+                      {t('analyze.elo_in_60_days')}: ~{metas.elo_previsto_60_dias}
                     </div>
                   )}
                 </div>

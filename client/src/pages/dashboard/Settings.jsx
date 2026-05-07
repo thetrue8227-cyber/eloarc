@@ -7,8 +7,7 @@ import toast from 'react-hot-toast';
 import { Check, ExternalLink, FileText, RefreshCw } from 'lucide-react';
 import i18n from '../../i18n';
 
-const PLAN_LABELS = { free: 'Free', rising: 'Rising — $10/mo', elite: 'Elite — $30/mo', arc_master: 'Arc Master — $100/mo' };
-const PLAN_COLORS = { free: '#7A7A9A', rising: '#7C6AF7', elite: '#00E5A0', arc_master: '#FFD700' };
+import { PLAN_LABELS_FULL as PLAN_LABELS, PLAN_COLORS } from '../../utils/planLimits';
 
 export default function Settings() {
   const { t } = useTranslation();
@@ -48,9 +47,9 @@ export default function Settings() {
     setSyncing(true);
     try {
       const { data } = await api.post('/import/sync');
-      toast.success(`Sincronização concluída: ${data.new_games} partidas encontradas`);
+      toast.success(t('settings.sync_complete', { count: data.new_games }));
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Erro ao sincronizar');
+      toast.error(err.response?.data?.error || t('settings.sync_error'));
     } finally { setSyncing(false); }
   };
 
@@ -73,9 +72,9 @@ export default function Settings() {
       a.download = `elo-arc-report-${new Date().toISOString().slice(0, 7)}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success('Relatório gerado e baixado!');
+      toast.success(t('settings.pdf_generated'));
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Falha ao gerar relatório');
+      toast.error(err.response?.data?.error || t('settings.pdf_failed'));
     } finally { setGeneratingPDF(false); }
   };
 
@@ -118,37 +117,37 @@ export default function Settings() {
 
         {/* Chess platforms */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.13 }} className="card" style={{ padding: 28 }}>
-          <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF', marginBottom: 6 }}>Plataformas de xadrez</h3>
-          <p style={{ fontSize: 13, color: '#7A7A9A', fontFamily: 'Inter', marginBottom: 20 }}>Salve seus usernames para importar e sincronizar partidas rapidamente.</p>
+          <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF', marginBottom: 6 }}>{t('settings.platforms_title')}</h3>
+          <p style={{ fontSize: 13, color: '#7A7A9A', fontFamily: 'Inter', marginBottom: 20 }}>{t('settings.platforms_subtitle')}</p>
           <form onSubmit={save} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div>
               <label style={{ display: 'block', fontSize: 13, color: '#7A7A9A', marginBottom: 6, fontFamily: 'Inter' }}>
-                <span style={{ fontWeight: 600, color: '#EFEFEF' }}>♞</span> Username no Lichess
+                <span style={{ fontWeight: 600, color: '#EFEFEF' }}>♞</span> {t('settings.lichess_username')}
               </label>
               <input type="text" value={form.lichess_username} onChange={e => setForm(p => ({ ...p, lichess_username: e.target.value }))}
-                placeholder="seu-username" className="input-field" />
+                placeholder="your-username" className="input-field" />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 13, color: '#7A7A9A', marginBottom: 6, fontFamily: 'Inter' }}>
-                <span style={{ fontWeight: 600, color: '#81B64C' }}>♟</span> Username no Chess.com
+                <span style={{ fontWeight: 600, color: '#81B64C' }}>♟</span> {t('settings.chesscom_username')}
               </label>
               <input type="text" value={form.chesscom_username} onChange={e => setForm(p => ({ ...p, chesscom_username: e.target.value }))}
-                placeholder="seu-username" className="input-field" />
+                placeholder="your-username" className="input-field" />
             </div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               <button type="submit" className="btn-primary" disabled={saving} style={{ fontSize: 13, padding: '9px 20px' }}>
-                {saved ? <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Check size={13} /> Salvo</span> : saving ? '...' : 'Salvar usernames'}
+                {saved ? <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}><Check size={13} /> {t('settings.saved_short')}</span> : saving ? '...' : t('settings.save_usernames')}
               </button>
               {hasPlatforms && (
                 <button type="button" onClick={sync} disabled={syncing} className="btn-secondary" style={{ fontSize: 13, padding: '9px 20px', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <RefreshCw size={13} style={{ animation: syncing ? 'spin 1s linear infinite' : 'none' }} />
-                  {syncing ? 'Sincronizando...' : 'Sincronizar novas partidas'}
+                  {syncing ? t('settings.syncing') : t('settings.sync_new_games')}
                 </button>
               )}
             </div>
             {user?.last_sync_at && (
               <div style={{ fontSize: 12, color: '#7A7A9A', fontFamily: 'Inter' }}>
-                Última sincronização: {new Date(user.last_sync_at).toLocaleString('pt-BR')}
+                {t('settings.last_sync')}: {new Date(user.last_sync_at).toLocaleString(user?.language === 'en' ? 'en-US' : 'pt-BR')}
               </div>
             )}
           </form>
@@ -156,7 +155,7 @@ export default function Settings() {
 
         {/* Subscription */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.16 }} className="card" style={{ padding: 28 }}>
-          <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF', marginBottom: 16 }}>Assinatura</h3>
+          <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF', marginBottom: 16 }}>{t('settings.subscription')}</h3>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <div>
               <div style={{ fontSize: 13, color: '#7A7A9A', fontFamily: 'Inter', marginBottom: 4 }}>{t('settings.plan')}</div>
@@ -172,22 +171,22 @@ export default function Settings() {
           </div>
           {user?.plan === 'free' && (
             <a href="/pricing" className="btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, textDecoration: 'none', fontSize: 14, padding: '10px 24px' }}>
-              Fazer upgrade
+              {t('settings.upgrade')}
             </a>
           )}
         </motion.div>
 
-        {/* Arc Master PDF */}
-        {user?.plan === 'arc_master' && (
+        {/* King PDF */}
+        {user?.plan === 'king' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
             style={{ background: 'rgba(124,106,247,0.06)', border: '1px solid rgba(124,106,247,0.25)', borderRadius: 16, padding: 28 }}>
-            <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF', marginBottom: 8 }}>Relatório Mensal PDF</h3>
+            <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF', marginBottom: 8 }}>{t('settings.monthly_pdf_title')}</h3>
             <p style={{ color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter', lineHeight: 1.6, marginBottom: 20 }}>
-              Gere seu relatório PDF completo com análise das últimas 5 partidas, padrões e roadmap de 30 dias.
+              {t('settings.monthly_pdf_desc')}
             </p>
             <button onClick={generatePDF} disabled={generatingPDF} className="btn-primary" style={{ fontSize: 14, padding: '10px 24px', display: 'flex', alignItems: 'center', gap: 8 }}>
               <FileText size={15} />
-              {generatingPDF ? 'Gerando PDF...' : 'Gerar relatório mensal'}
+              {generatingPDF ? t('settings.generating_pdf') : t('settings.generate_pdf')}
             </button>
           </motion.div>
         )}

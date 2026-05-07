@@ -127,13 +127,27 @@ Go back to the backend service → Environment → update `CLIENT_URL` to your f
 ## Stripe Setup
 
 1. Create products in Stripe Dashboard:
-   - Rising — $10/month recurring
-   - Elite — $30/month recurring
-   - Arc Master — $100/month recurring
-2. Copy Price IDs (`price_xxx`) to `STRIPE_PRICE_*` env vars
+   - Pawn — $7/month recurring
+   - Knight — $19/month recurring
+   - King — $49/month recurring
+2. Copy Price IDs (`price_xxx`) to `STRIPE_PRICE_PAWN`, `STRIPE_PRICE_KNIGHT`, `STRIPE_PRICE_KING`
 3. Webhooks → Add endpoint: `https://your-backend.com/api/stripe/webhook`
    - Events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
 4. Copy Webhook Secret to `STRIPE_WEBHOOK_SECRET`
+
+---
+
+## Gmail App Password (for password reset emails)
+
+Password reset emails go out via SMTP. With Gmail you must use an **App Password**, not your regular password:
+
+1. Go to [myaccount.google.com](https://myaccount.google.com)
+2. **Security → 2-Step Verification** — enable it
+3. **Security → App passwords** — generate one for "Mail"
+4. Copy the 16-character password into `EMAIL_PASS` in `.env`
+5. Set `EMAIL_USER` to the Gmail address that issued the App Password
+
+If `EMAIL_USER`/`EMAIL_PASS` are left blank, the server logs reset links to the console as a fallback so local development still works without SMTP.
 
 ---
 
@@ -153,9 +167,9 @@ When traffic grows:
 | `ANTHROPIC_API_KEY` | Anthropic API key |
 | `STRIPE_SECRET_KEY` | Stripe secret key |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret |
-| `STRIPE_PRICE_RISING` | Stripe Price ID for Rising plan |
-| `STRIPE_PRICE_ELITE` | Stripe Price ID for Elite plan |
-| `STRIPE_PRICE_ARC_MASTER` | Stripe Price ID for Arc Master plan |
+| `STRIPE_PRICE_PAWN` | Stripe Price ID for Pawn plan |
+| `STRIPE_PRICE_KNIGHT` | Stripe Price ID for Knight plan |
+| `STRIPE_PRICE_KING` | Stripe Price ID for King plan |
 | `DATABASE_URL` | PostgreSQL connection string |
 | `JWT_SECRET` | Secret for signing JWTs |
 | `EMAIL_HOST` | SMTP host (e.g. smtp.gmail.com) |
@@ -170,11 +184,14 @@ When traffic grows:
 
 ## Plans
 
-| Feature | Free | Rising | Elite | Arc Master |
+| Feature | Free | Pawn | Knight | King |
 |---|---|---|---|---|
 | Analyses/month | 3 | Unlimited | Unlimited | Unlimited |
-| Engine ELO | 1200 | 2200 | 2800 | 3000 |
-| AI Chat | ✗ | 20/mo | Unlimited | Unlimited |
-| Email reports | ✗ | Biweekly | Weekly | Weekly |
+| Engine ELO | 1200 | 2000 | 2400 | 2800+ |
+| AI Chat | ✗ | ✗ | 30/mo | Unlimited |
+| AI move-by-move replay | ✗ | ✗ | ✓ | ✓ |
+| Email reports | ✗ | ✗ | Biweekly | Weekly |
 | Monthly PDF | ✗ | ✗ | ✗ | ✓ |
-| Price | Free | $10/mo | $30/mo | $100/mo |
+| Opening repertoire analysis | ✗ | ✗ | ✗ | ✓ |
+| Profile badge | ✗ | ✗ | ✗ | ✓ |
+| Price | Free | $7/mo | $19/mo | $49/mo |

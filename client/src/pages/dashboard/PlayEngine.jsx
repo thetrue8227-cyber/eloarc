@@ -6,7 +6,7 @@ import { Chess } from 'chess.js';
 import { useAuth } from '../../contexts/AuthContext';
 import toast from 'react-hot-toast';
 
-const ELO_LIMITS = { free: 1200, rising: 2200, elite: 2800, arc_master: 3000 };
+const ELO_LIMITS = { free: 1200, pawn: 2000, knight: 2400, king: 2800 };
 
 export default function PlayEngine() {
   const { t } = useTranslation();
@@ -32,9 +32,9 @@ export default function PlayEngine() {
       w.addEventListener('message', (e) => { if (e.data === 'uciok') setEngineReady(true); });
       return () => w.terminate();
     } catch {
-      toast.error('Engine não disponível. Recarregue a página.');
+      toast.error(t('play.engine_unavailable'));
     }
-  }, []);
+  }, [t]);
 
   const engineMove = useCallback((currentGame) => {
     const sf = stockfishRef.current;
@@ -54,7 +54,7 @@ export default function PlayEngine() {
               setPosition(g.fen());
               gameRef.current = g;
               if (g.isGameOver()) {
-                setGameOver(g.isCheckmate() ? (g.turn() === 'w' ? 'Você ganhou!' : 'Você perdeu.') : 'Empate!');
+                setGameOver(g.isCheckmate() ? (g.turn() === 'w' ? t('play.you_win') : t('play.you_lose')) : t('play.draw'));
               }
             } catch {}
             return g;
@@ -63,7 +63,7 @@ export default function PlayEngine() {
         setThinking(false);
       }
     };
-  }, [eloTarget]);
+  }, [eloTarget, t]);
 
   const onDrop = useCallback((sourceSquare, targetSquare) => {
     if (!started || thinking || gameOver) return false;
@@ -76,7 +76,7 @@ export default function PlayEngine() {
       setGame(g);
       setPosition(g.fen());
       if (g.isGameOver()) {
-        setGameOver(g.isCheckmate() ? (g.turn() === 'w' ? 'Você ganhou!' : 'Você perdeu.') : 'Empate!');
+        setGameOver(g.isCheckmate() ? (g.turn() === 'w' ? t('play.you_win') : t('play.you_lose')) : t('play.draw'));
         return true;
       }
       setTimeout(() => engineMove(g), 300);
@@ -95,7 +95,7 @@ export default function PlayEngine() {
   };
 
   const resign = () => {
-    setGameOver('Você desistiu.');
+    setGameOver(t('play.resigned'));
     setStarted(false);
   };
 
@@ -109,7 +109,7 @@ export default function PlayEngine() {
     <div>
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: 24 }}>
         <h1 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: 28, color: '#EFEFEF', marginBottom: 4 }}>{t('play.title')}</h1>
-        <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter' }}>Jogue contra a engine com ELO ajustável.</p>
+        <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter' }}>{t('play.subtitle')}</p>
       </motion.div>
 
       {/* Layout: board left (max 480px), panel right */}
@@ -129,7 +129,7 @@ export default function PlayEngine() {
           {thinking && (
             <div style={{ textAlign: 'center', marginTop: 8, fontSize: 13, color: '#7C6AF7', fontFamily: 'Inter', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
               <div style={{ width: 10, height: 10, borderRadius: '50%', border: '2px solid #7C6AF7', borderTopColor: 'transparent', animation: 'spin 0.7s linear infinite' }} />
-              Engine pensando...
+              {t('play.engine_thinking')}
             </div>
           )}
         </div>
@@ -148,9 +148,9 @@ export default function PlayEngine() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', marginTop: 4 }}>
                   <span>200</span><span>{maxElo}</span>
                 </div>
-                {maxElo < 3000 && (
+                {maxElo < 2800 && (
                   <div style={{ fontSize: 11, color: '#7C6AF7', marginTop: 6, fontFamily: 'Inter' }}>
-                    Upgrade para desbloquear ELO maior
+                    {t('play.upgrade_for_higher_elo')}
                   </div>
                 )}
               </div>
@@ -161,23 +161,23 @@ export default function PlayEngine() {
                   {['white', 'black'].map(c => (
                     <button key={c} onClick={() => setPlayerColor(c)}
                       style={{ flex: 1, padding: '10px', borderRadius: 10, border: `1px solid ${playerColor === c ? '#7C6AF7' : '#1E1E32'}`, background: playerColor === c ? 'rgba(124,106,247,0.12)' : 'transparent', color: '#EFEFEF', cursor: 'pointer', fontFamily: 'Inter', fontSize: 13, transition: 'all 0.15s' }}>
-                      {c === 'white' ? '♔ Brancas' : '♚ Pretas'}
+                      {c === 'white' ? `♔ ${t('play.white')}` : `♚ ${t('play.black')}`}
                     </button>
                   ))}
                 </div>
               </div>
 
               <button onClick={startGame} disabled={!engineReady} className="btn-primary" style={{ width: '100%', fontSize: 15 }}>
-                {engineReady ? t('play.start') : 'Carregando engine...'}
+                {engineReady ? t('play.start') : t('play.loading_engine')}
               </button>
             </div>
           ) : (
             <div className="card" style={{ padding: 20 }}>
               <div style={{ fontSize: 12, color: '#7A7A9A', fontFamily: 'Inter', marginBottom: 2 }}>
-                Jogando com as {playerColor === 'white' ? 'brancas' : 'pretas'}
+                {t('play.playing_as')} {playerColor === 'white' ? t('play.white').toLowerCase() : t('play.black').toLowerCase()}
               </div>
               <div style={{ fontSize: 16, fontFamily: 'Sora', fontWeight: 700, color: '#EFEFEF', marginBottom: 16 }}>
-                vs Engine ELO {eloTarget}
+                {t('play.vs_engine')} {eloTarget}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <button onClick={resign} className="btn-secondary" style={{ fontSize: 13 }}>{t('play.resign')}</button>
@@ -188,10 +188,10 @@ export default function PlayEngine() {
 
           {/* Move history */}
           <div className="card" style={{ padding: 20 }}>
-            <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#EFEFEF', marginBottom: 10 }}>Lances</div>
+            <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 14, color: '#EFEFEF', marginBottom: 10 }}>{t('play.moves')}</div>
             <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#7A7A9A', maxHeight: 220, overflowY: 'auto', lineHeight: 2 }}>
               {moveHistory.length === 0 ? (
-                <span style={{ color: '#3A3A5C' }}>Nenhum lance ainda</span>
+                <span style={{ color: '#3A3A5C' }}>{t('play.no_moves')}</span>
               ) : (
                 moveHistory.map((line, i) => <div key={i} style={{ color: i === moveHistory.length - 1 ? '#EFEFEF' : '#7A7A9A' }}>{line}</div>)
               )}

@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
-const LOADING_MESSAGES = [
-  'Buscando suas partidas...',
-  'Analisando seus erros recorrentes...',
-  'Identificando seus pontos cegos...',
-  'Montando seu perfil de jogador...',
-  'Gerando seu plano de treino de 30 dias...',
-];
-
 export default function Onboarding() {
+  const { t } = useTranslation();
+  const LOADING_MESSAGES = [
+    t('onboarding.loading_searching'),
+    t('onboarding.loading_analyzing'),
+    t('onboarding.loading_blindspots'),
+    t('onboarding.loading_profile'),
+    t('onboarding.loading_plan'),
+  ];
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [platform, setPlatform] = useState(null);
@@ -35,7 +36,7 @@ export default function Onboarding() {
       setPgns(data.pgns);
       setStep(3);
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Erro ao buscar partidas');
+      toast.error(err.response?.data?.error || t('onboarding.fetch_error'));
     } finally { setLoading(false); }
   };
 
@@ -56,7 +57,7 @@ export default function Onboarding() {
       localStorage.removeItem('needs_onboarding');
     } catch (err) {
       clearInterval(interval);
-      toast.error(err.response?.data?.error || 'Erro ao analisar partidas');
+      toast.error(err.response?.data?.error || t('onboarding.analyze_error'));
       setStep(3);
       setLoading(false);
     }
@@ -81,17 +82,17 @@ export default function Onboarding() {
             style={{ textAlign: 'center', maxWidth: 540 }}>
             <div style={{ width: 64, height: 64, background: 'rgba(124,106,247,0.15)', borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 32 }}>♟</div>
             <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 36, color: '#EFEFEF', marginBottom: 12, lineHeight: 1.2 }}>
-              Bem-vindo ao <span style={{ background: 'linear-gradient(135deg, #7C6AF7, #00E5A0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Elo Arc</span>
+              {t('onboarding.welcome')} <span style={{ background: 'linear-gradient(135deg, #7C6AF7, #00E5A0)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Elo Arc</span>
             </h1>
             <p style={{ color: '#7A7A9A', fontSize: 16, fontFamily: 'Inter', lineHeight: 1.7, marginBottom: 40 }}>
-              Vamos montar seu perfil de jogador analisando suas partidas reais. O processo leva menos de 2 minutos.
+              {t('onboarding.intro')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <button onClick={() => setStep(2)} className="btn-primary" style={{ fontSize: 16, padding: '14px 32px' }}>
-                Importar minhas partidas
+                {t('onboarding.import_my_games')}
               </button>
               <button onClick={skip} style={{ background: 'none', border: 'none', color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', cursor: 'pointer', padding: 8 }}>
-                Prefiro colar um PGN manualmente →
+                {t('onboarding.paste_pgn_instead')}
               </button>
             </div>
           </motion.div>
@@ -101,8 +102,8 @@ export default function Onboarding() {
         {step === 2 && (
           <motion.div key="step2" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
             style={{ maxWidth: 480, width: '100%' }}>
-            <h2 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: 26, color: '#EFEFEF', marginBottom: 8, textAlign: 'center' }}>Onde você joga?</h2>
-            <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', textAlign: 'center', marginBottom: 32 }}>Escolha a plataforma para importar suas últimas partidas</p>
+            <h2 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: 26, color: '#EFEFEF', marginBottom: 8, textAlign: 'center' }}>{t('onboarding.where_play')}</h2>
+            <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', textAlign: 'center', marginBottom: 32 }}>{t('onboarding.choose_platform')}</p>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
               {[
@@ -121,21 +122,21 @@ export default function Onboarding() {
             {platform && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <label style={{ display: 'block', fontSize: 13, color: '#7A7A9A', marginBottom: 8, fontFamily: 'Inter' }}>
-                  Seu username no {platform === 'lichess' ? 'Lichess' : 'Chess.com'}
+                  {t('onboarding.your_username_at')} {platform === 'lichess' ? 'Lichess' : 'Chess.com'}
                 </label>
                 <div style={{ display: 'flex', gap: 10 }}>
                   <input value={username} onChange={e => setUsername(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && username.trim() && preview()}
-                    placeholder={`ex: magnus_carlsen`}
+                    placeholder={`magnus_carlsen`}
                     className="input-field" style={{ flex: 1 }} />
                   <button onClick={preview} disabled={loading || !username.trim()} className="btn-primary" style={{ padding: '0 20px', whiteSpace: 'nowrap' }}>
-                    {loading ? '...' : 'Buscar'}
+                    {loading ? '...' : t('onboarding.find')}
                   </button>
                 </div>
               </motion.div>
             )}
 
-            <button onClick={() => setStep(1)} style={{ marginTop: 20, background: 'none', border: 'none', color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter', cursor: 'pointer' }}>← Voltar</button>
+            <button onClick={() => setStep(1)} style={{ marginTop: 20, background: 'none', border: 'none', color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter', cursor: 'pointer' }}>← {t('onboarding.back')}</button>
           </motion.div>
         )}
 
@@ -145,20 +146,20 @@ export default function Onboarding() {
             style={{ maxWidth: 480, width: '100%', textAlign: 'center' }}>
             <div style={{ width: 72, height: 72, background: 'rgba(0,229,160,0.1)', borderRadius: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: 36 }}>✓</div>
             <h2 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: 26, color: '#EFEFEF', marginBottom: 8 }}>
-              {pgns.length} partidas encontradas
+              {t('onboarding.games_found', { count: pgns.length })}
             </h2>
             <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', marginBottom: 8 }}>
-              Conta: <strong style={{ color: '#EFEFEF' }}>{username}</strong> no {platform === 'lichess' ? 'Lichess' : 'Chess.com'}
+              {t('onboarding.account_at')}: <strong style={{ color: '#EFEFEF' }}>{username}</strong> {t('onboarding.at_platform')} {platform === 'lichess' ? 'Lichess' : 'Chess.com'}
             </p>
             <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', lineHeight: 1.6, marginBottom: 32 }}>
-              Vamos analisar até 10 partidas com IA para montar seu perfil completo e plano de treino de 30 dias.
+              {t('onboarding.will_analyze')}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <button onClick={importAndAnalyze} className="btn-primary" style={{ fontSize: 15, padding: '14px' }}>
-                Analisar e montar meu perfil
+                {t('onboarding.analyze_and_build')}
               </button>
               <button onClick={() => setStep(2)} style={{ background: 'none', border: 'none', color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter', cursor: 'pointer', padding: 8 }}>
-                ← Tentar outro username
+                {t('onboarding.try_other_username')}
               </button>
             </div>
           </motion.div>
@@ -177,7 +178,7 @@ export default function Onboarding() {
                 {LOADING_MESSAGES[msgIndex]}
               </motion.p>
             </AnimatePresence>
-            <p style={{ color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter' }}>Isso pode levar 30–60 segundos</p>
+            <p style={{ color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter' }}>{t('onboarding.may_take')}</p>
           </motion.div>
         )}
 
@@ -190,15 +191,15 @@ export default function Onboarding() {
               ✓
             </motion.div>
             <h2 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 28, color: '#EFEFEF', marginBottom: 8 }}>
-              Perfil montado!
+              {t('onboarding.profile_built')}
             </h2>
             <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', marginBottom: 24 }}>
-              Analisamos <strong style={{ color: '#EFEFEF' }}>{result.games_analyzed} partidas</strong> suas e montamos seu perfil inicial.
+              {t('onboarding.we_analyzed')} <strong style={{ color: '#EFEFEF' }}>{result.games_analyzed}</strong> {t('onboarding.and_built')}
             </p>
 
             {result.diagnostico && (
               <div style={{ background: 'rgba(124,106,247,0.06)', border: '1px solid rgba(124,106,247,0.2)', borderRadius: 16, padding: 20, marginBottom: 24, textAlign: 'left' }}>
-                <div style={{ fontSize: 12, color: '#7C6AF7', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'Inter', marginBottom: 8 }}>Seu diagnóstico</div>
+                <div style={{ fontSize: 12, color: '#7C6AF7', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontFamily: 'Inter', marginBottom: 8 }}>{t('onboarding.your_diagnosis')}</div>
                 <p style={{ color: '#EFEFEF', fontSize: 13, fontFamily: 'Inter', lineHeight: 1.7, margin: 0 }}>
                   {result.diagnostico.slice(0, 280)}{result.diagnostico.length > 280 ? '...' : ''}
                 </p>
@@ -208,9 +209,9 @@ export default function Onboarding() {
             {result.perfil && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 24 }}>
                 {[
-                  { label: 'Tática', val: result.perfil.tatica },
-                  { label: 'Posicional', val: result.perfil.posicional },
-                  { label: 'Final', val: result.perfil.final },
+                  { label: t('analyze.category_tactics'), val: result.perfil.tatica },
+                  { label: t('analyze.category_positional'), val: result.perfil.posicional },
+                  { label: t('analyze.category_endgame'), val: result.perfil.final },
                 ].map(({ label, val }) => (
                   <div key={label} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: 12, padding: '12px 8px', border: '1px solid #1E1E32' }}>
                     <div style={{ fontSize: 22, fontFamily: 'Sora', fontWeight: 700, color: '#7C6AF7', marginBottom: 2 }}>{val}</div>
@@ -221,7 +222,7 @@ export default function Onboarding() {
             )}
 
             <button onClick={() => navigate('/dashboard')} className="btn-primary" style={{ width: '100%', fontSize: 16, padding: '14px' }}>
-              Ir para o Dashboard →
+              {t('onboarding.go_to_dashboard')}
             </button>
           </motion.div>
         )}

@@ -20,7 +20,10 @@ export default function Login() {
       await login(form.email, form.password);
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.error || t('errors.generic'));
+      const code = err.response?.data?.error;
+      const key = code ? `errors.${code}` : 'errors.generic';
+      const translated = t(key);
+      toast.error(translated === key ? t('errors.generic') : translated);
     } finally {
       setLoading(false);
     }

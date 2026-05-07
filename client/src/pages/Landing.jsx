@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { ArrowRight, Zap, Brain, TrendingUp, Check, X } from 'lucide-react';
 
 const fadeUp = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
@@ -92,7 +93,7 @@ export default function Landing() {
           <motion.div variants={stagger} initial="hidden" animate="show">
             <motion.div variants={fadeUp}
               style={{ display: 'inline-block', background: 'rgba(124,106,247,0.12)', border: '1px solid rgba(124,106,247,0.3)', borderRadius: 20, padding: '6px 16px', marginBottom: 24, fontSize: 13, color: '#7C6AF7', fontFamily: 'Inter' }}>
-              ✦ AI Chess Coaching · Evolução Contínua
+              ✦ {t('hero.badge')}
             </motion.div>
             <motion.h1 variants={fadeUp}
               style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(48px,7vw,72px)', lineHeight: 1.1, marginBottom: 24 }}
@@ -122,7 +123,7 @@ export default function Landing() {
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FF5F56' }} />
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#FFBD2E' }} />
                 <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#27C93F' }} />
-                <div style={{ flex: 1, background: '#1E1E32', borderRadius: 6, padding: '4px 12px', fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', marginLeft: 12 }}>eloarc.com/dashboard</div>
+                <div style={{ flex: 1, background: '#1E1E32', borderRadius: 6, padding: '4px 12px', fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', marginLeft: 12 }}>{t('landing.fake_url')}</div>
               </div>
               {/* Fake dashboard */}
               <div style={{ background: '#080810', padding: 20, display: 'flex', gap: 16, minHeight: 280 }}>
@@ -133,7 +134,7 @@ export default function Landing() {
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 12 }}>
                   {/* Stats row */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10 }}>
-                    {[['#7C6AF7','47'], ['#FF6B6B','Tática'], ['#00E5A0','1240'], ['#FFD700','Rising']].map(([color, val], i) => (
+                    {[['#7C6AF7','47'], ['#FF6B6B', t('analyze.category_tactics')], ['#00E5A0','1240'], ['#FFD700','Knight']].map(([color, val], i) => (
                       <div key={i} style={{ background: '#0E0E1A', borderRadius: 10, padding: '10px 12px', border: '1px solid #1E1E32' }}>
                         <div style={{ width: 20, height: 4, borderRadius: 2, background: color, marginBottom: 8, opacity: 0.7 }} />
                         <div style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: 14, color: '#EFEFEF' }}>{val}</div>
@@ -142,7 +143,7 @@ export default function Landing() {
                   </div>
                   {/* Chart area */}
                   <div style={{ background: '#0E0E1A', borderRadius: 10, padding: '12px 16px', border: '1px solid #1E1E32', flex: 1 }}>
-                    <div style={{ fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', marginBottom: 10 }}>Evolução por fase</div>
+                    <div style={{ fontSize: 11, color: '#7A7A9A', fontFamily: 'Inter', marginBottom: 10 }}>{t('landing.fake_phase_evolution')}</div>
                     <svg width="100%" height="80" viewBox="0 0 400 80" preserveAspectRatio="none">
                       <defs>
                         <linearGradient id="hg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#7C6AF7" stopOpacity="0.4"/><stop offset="100%" stopColor="#7C6AF7" stopOpacity="0"/></linearGradient>
@@ -245,19 +246,16 @@ export default function Landing() {
       <section style={{ padding: '100px 24px', textAlign: 'center' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <h2 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(32px,5vw,56px)', marginBottom: 20 }} className="gradient-text">
-            Start your evolution today
+            {t('landing.cta_title')}
           </h2>
-          <p style={{ color: '#7A7A9A', fontSize: 16, marginBottom: 32, fontFamily: 'Inter' }}>Free to start. No credit card required.</p>
+          <p style={{ color: '#7A7A9A', fontSize: 16, marginBottom: 32, fontFamily: 'Inter' }}>{t('landing.cta_subtitle')}</p>
           <button onClick={() => navigate('/register')} className="btn-primary" style={{ fontSize: 16, padding: '16px 40px' }}>
             {t('hero.cta_primary')} <ArrowRight size={18} />
           </button>
         </motion.div>
       </section>
 
-      {/* Footer */}
-      <footer style={{ borderTop: '1px solid #1E1E32', padding: '24px', textAlign: 'center', color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter' }}>
-        <span style={{ color: '#7C6AF7', fontFamily: 'Sora', fontWeight: 700 }}>Elo Arc</span> © {new Date().getFullYear()} · Your chess. Evolved.
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function Navbar() {
           </button>
           {user ? (
             <button onClick={() => navigate('/dashboard')} className="btn-primary" style={{ padding: '8px 20px', fontSize: '14px' }}>
-              Dashboard
+              {t('nav.dashboard')}
             </button>
           ) : (
             <>

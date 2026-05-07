@@ -15,7 +15,7 @@ export default function CoachChat() {
   const [sending, setSending] = useState(false);
   const bottomRef = useRef(null);
 
-  const canChat = ['rising', 'elite', 'arc_master'].includes(user?.plan);
+  const canChat = ['knight', 'king'].includes(user?.plan);
 
   useEffect(() => {
     if (!canChat) { setLoading(false); return; }
@@ -47,7 +47,7 @@ export default function CoachChat() {
   };
 
   const clearChat = async () => {
-    if (!window.confirm('Clear all chat messages?')) return;
+    if (!window.confirm(t('chat.clear_confirm'))) return;
     await api.delete('/chat/messages');
     setMessages([]);
   };
@@ -60,7 +60,7 @@ export default function CoachChat() {
           <MessageSquare size={40} color="#7C6AF7" style={{ margin: '0 auto 16px' }} />
           <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', marginBottom: 20 }}>{t('chat.upgrade_prompt')}</p>
           <a href="/pricing" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 14, padding: '12px 24px' }}>
-            View plans
+            {t('chat.view_plans')}
           </a>
         </div>
       </div>
@@ -72,7 +72,7 @@ export default function CoachChat() {
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexShrink: 0 }}>
         <div>
           <h1 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: 28, marginBottom: 4, color: '#EFEFEF' }}>{t('chat.title')}</h1>
-          <p style={{ color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter' }}>Ask anything about your games and chess improvement</p>
+          <p style={{ color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter' }}>{t('chat.subtitle')}</p>
         </div>
         {messages.length > 0 && (
           <button onClick={clearChat} className="btn-secondary" style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px' }}>
@@ -85,7 +85,7 @@ export default function CoachChat() {
       <div style={{ flex: 1, overflowY: 'auto', marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
         {loading ? (
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter' }}>
-            Loading...
+            {t('chat.loading')}
           </div>
         ) : messages.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: 12 }}>
@@ -93,9 +93,9 @@ export default function CoachChat() {
               <MessageSquare size={26} color="#7C6AF7" />
             </div>
             <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', textAlign: 'center', maxWidth: 300, lineHeight: 1.6 }}>
-              Ask me anything about your chess — I have full context of your games and profile.
+              {t('chat.empty_prompt')}
             </p>
-            {['Why do I keep losing endgames?', 'What was my biggest mistake recently?', 'How can I improve my opening?'].map((q, i) => (
+            {[t('chat.suggestion_endgames'), t('chat.suggestion_mistake'), t('chat.suggestion_opening')].map((q, i) => (
               <button key={i} onClick={() => setInput(q)}
                 style={{ padding: '8px 16px', background: 'rgba(124,106,247,0.08)', border: '1px solid rgba(124,106,247,0.2)', borderRadius: 20, fontSize: 13, color: '#EFEFEF', cursor: 'pointer', fontFamily: 'Inter' }}>
                 {q}

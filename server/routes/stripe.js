@@ -4,9 +4,9 @@ const { authenticate } = require('../middleware/auth');
 const { query } = require('../db');
 
 const PRICE_MAP = {
-  rising:     process.env.STRIPE_PRICE_RISING,
-  elite:      process.env.STRIPE_PRICE_ELITE,
-  arc_master: process.env.STRIPE_PRICE_ARC_MASTER,
+  pawn:   process.env.STRIPE_PRICE_PAWN,
+  knight: process.env.STRIPE_PRICE_KNIGHT,
+  king:   process.env.STRIPE_PRICE_KING,
 };
 
 router.post('/checkout', authenticate, async (req, res, next) => {

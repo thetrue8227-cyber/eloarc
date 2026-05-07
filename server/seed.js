@@ -13,7 +13,7 @@ async function seed() {
      VALUES ($1, $2, $3, $4, $5)
      ON CONFLICT (email) DO UPDATE SET plan = EXCLUDED.plan
      RETURNING id`,
-    ['Demo Player', 'demo@eloarc.com', hash, 'rising', 'en']
+    ['Demo Player', 'demo@eloarc.com', hash, 'knight', 'en']
   );
 
   const userId = user.id;
@@ -52,6 +52,31 @@ async function seed() {
      'Your recent games show consistent endgame struggles, especially in rook endgames. This week focus on converting winning positions and defensive technique.',
      true]
   );
+
+  // Personal accounts — King plan (unlimited access)
+  const personalHash = await bcrypt.hash('EloArc2026!', 12);
+  const personalAccounts = [
+    { email: 'pinksbx@gmail.com',     name: 'Pedro',     language: 'pt-BR' },
+    { email: 'thetrue8227@gmail.com', name: 'Pedro',     language: 'pt-BR' },
+  ];
+
+  for (const acc of personalAccounts) {
+    const { rows: [u] } = await pool.query(
+      `INSERT INTO users (name, email, password_hash, plan, language)
+       VALUES ($1, $2, $3, 'king', $4)
+       ON CONFLICT (email) DO UPDATE SET
+         password_hash = EXCLUDED.password_hash,
+         plan = 'king',
+         updated_at = NOW()
+       RETURNING id`,
+      [acc.name, acc.email, personalHash, acc.language]
+    );
+    await pool.query(
+      `INSERT INTO player_profiles (user_id) VALUES ($1) ON CONFLICT DO NOTHING`,
+      [u.id]
+    );
+    console.log(`Personal account ready: ${acc.email} / EloArc2026! (plan: king)`);
+  }
 
   console.log('Seed complete! Demo account: demo@eloarc.com / demo1234');
   process.exit(0);

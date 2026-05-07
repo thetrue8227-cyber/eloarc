@@ -6,7 +6,7 @@ const { generatePDF } = require('../services/pdf');
 const { sendPDFReport } = require('../services/email');
 const { query } = require('../db');
 
-router.post('/monthly-report', authenticate, requirePlan('arc_master'), async (req, res, next) => {
+router.post('/monthly-report', authenticate, requirePlan('king'), async (req, res, next) => {
   try {
     const { rows: games } = await query(
       'SELECT pgn, analysis, white, black, result, created_at FROM games WHERE user_id = $1 AND analysis IS NOT NULL ORDER BY created_at DESC LIMIT 5',

@@ -8,7 +8,7 @@ import api from '../../services/api';
 import SkeletonCard from '../../components/SkeletonCard';
 import { TrendingUp, Target, Flame, BarChart2, ArrowRight } from 'lucide-react';
 
-const PLAN_LIMITS = { free: 3, rising: Infinity, elite: Infinity, arc_master: Infinity };
+const PLAN_LIMITS = { free: 3, pawn: Infinity, knight: Infinity, king: Infinity };
 
 function AnimatedNumber({ value, duration = 1000 }) {
   const [display, setDisplay] = useState(0);
@@ -63,7 +63,12 @@ export default function Overview() {
     const cats = {};
     games.forEach(g => g.analysis?.erros?.forEach(e => { cats[e.categoria] = (cats[e.categoria] || 0) + 1; }));
     const top = Object.entries(cats).sort((a, b) => b[1] - a[1])[0];
-    const labels = { opening: 'Abertura', tactics: 'Tática', positional: 'Posicional', endgame: 'Final' };
+    const labels = {
+      opening: t('analyze.category_opening'),
+      tactics: t('analyze.category_tactics'),
+      positional: t('analyze.category_positional'),
+      endgame: t('analyze.category_endgame'),
+    };
     return top ? (labels[top[0]] || top[0]) : '—';
   };
 
@@ -74,13 +79,14 @@ export default function Overview() {
     Final: g.analysis?.perfil_update?.final || 50,
   }));
 
+  const PLAN_LABELS = { free: 'Free', pawn: 'Pawn', knight: 'Knight', king: 'King' };
   const stats = [
     { label: t('overview.games_analyzed'), value: profile?.games_analyzed ?? 0, icon: BarChart2, color: '#7C6AF7' },
     { label: t('overview.top_error'), value: mostFrequentError(), icon: Target, color: '#FF6B6B', noAnim: true },
     { label: t('overview.estimated_elo'), value: profile?.estimated_elo ?? 0, icon: TrendingUp, color: '#00E5A0' },
     {
-      label: user?.plan === 'free' ? 'Análises este mês' : 'Plano ativo',
-      value: user?.plan === 'free' ? (usage?.analyses_count ?? 0) : user?.plan?.replace('_', ' ') || 'Free',
+      label: user?.plan === 'free' ? t('dashboard.monthly_analyses') : t('dashboard.active_plan'),
+      value: user?.plan === 'free' ? (usage?.analyses_count ?? 0) : (PLAN_LABELS[user?.plan] || 'Free'),
       icon: Flame, color: '#FFD700', noAnim: user?.plan !== 'free',
     },
   ];
@@ -95,10 +101,10 @@ export default function Overview() {
     <div>
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
         <h1 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: 28, marginBottom: 6, color: '#EFEFEF' }}>
-          Hey, {user?.name?.split(' ')[0]}
+          {t('dashboard.greeting')}, {user?.name?.split(' ')[0]}
         </h1>
         <p style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', marginBottom: 32 }}>
-          {new Date().toLocaleDateString('pt-BR', { weekday: 'long', month: 'long', day: 'numeric' })}
+          {new Date().toLocaleDateString(user?.language === 'en' ? 'en-US' : 'pt-BR', { weekday: 'long', month: 'long', day: 'numeric' })}
         </p>
       </motion.div>
 
@@ -122,7 +128,7 @@ export default function Overview() {
         {/* Area chart */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
           className="card" style={{ padding: 24 }}>
-          <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, marginBottom: 20, color: '#EFEFEF' }}>Evolução por fase</h3>
+          <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, marginBottom: 20, color: '#EFEFEF' }}>{t('dashboard.phase_evolution')}</h3>
           {chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height={180}>
               <AreaChart data={chartData}>
@@ -152,10 +158,10 @@ export default function Overview() {
             <div style={{ height: 180, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
               <div style={{ fontSize: 40 }}>📈</div>
               <div style={{ color: '#7A7A9A', fontSize: 14, fontFamily: 'Inter', textAlign: 'center' }}>
-                Analise sua primeira partida para ver sua evolução
+                {t('dashboard.analyze_first_chart')}
               </div>
               <button onClick={() => navigate('/dashboard/analyze')} className="btn-primary" style={{ fontSize: 13, padding: '8px 18px' }}>
-                Analisar agora
+                {t('dashboard.analyze_now')}
               </button>
             </div>
           )}
@@ -175,7 +181,7 @@ export default function Overview() {
               </p>
             )}
             <button onClick={() => navigate('/dashboard/training')} className="btn-secondary" style={{ fontSize: 13, padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 6 }}>
-              Ver plano completo <ArrowRight size={14} />
+              {t('dashboard.view_full_plan')} <ArrowRight size={14} />
             </button>
           </motion.div>
         )}
@@ -185,15 +191,15 @@ export default function Overview() {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF' }}>{t('overview.recent_games')}</h3>
-          <button onClick={() => navigate('/dashboard/history')} style={{ fontSize: 13, color: '#7C6AF7', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter' }}>Ver todas →</button>
+          <button onClick={() => navigate('/dashboard/history')} style={{ fontSize: 13, color: '#7C6AF7', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter' }}>{t('dashboard.see_all')} →</button>
         </div>
         {games.length === 0 ? (
           <div className="card" style={{ padding: 48, textAlign: 'center' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>♟</div>
-            <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF', marginBottom: 6 }}>Nenhuma partida ainda</div>
-            <p style={{ color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter', marginBottom: 20 }}>Analise sua primeira partida para começar.</p>
+            <div style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: 16, color: '#EFEFEF', marginBottom: 6 }}>{t('dashboard.no_games_yet')}</div>
+            <p style={{ color: '#7A7A9A', fontSize: 13, fontFamily: 'Inter', marginBottom: 20 }}>{t('dashboard.analyze_first_cta')}</p>
             <button onClick={() => navigate('/dashboard/analyze')} className="btn-primary" style={{ fontSize: 14, padding: '10px 24px' }}>
-              Analisar partida
+              {t('analyze.title')}
             </button>
           </div>
         ) : (
@@ -207,8 +213,8 @@ export default function Overview() {
                   <div>
                     <div style={{ fontFamily: 'Inter', fontWeight: 600, fontSize: 14, color: '#EFEFEF', marginBottom: 2 }}>{g.white} vs {g.black}</div>
                     <div style={{ fontSize: 12, color: '#7A7A9A', fontFamily: 'Inter' }}>
-                      {new Date(g.created_at).toLocaleDateString('pt-BR')}
-                      {errCount > 0 && ` · ${errCount} erros`}
+                      {new Date(g.created_at).toLocaleDateString(user?.language === 'en' ? 'en-US' : 'pt-BR')}
+                      {errCount > 0 && ` · ${errCount} ${t('dashboard.errors')}`}
                       {elo && ` · ELO ${elo}`}
                     </div>
                   </div>

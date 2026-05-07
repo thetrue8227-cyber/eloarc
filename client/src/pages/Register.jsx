@@ -16,14 +16,17 @@ export default function Register() {
 
   const handle = async (e) => {
     e.preventDefault();
-    if (form.password.length < 8) { toast.error('Password must be at least 8 characters'); return; }
+    if (form.password.length < 8) { toast.error(t('errors.password_too_short')); return; }
     setLoading(true);
     try {
       await register(form.name, form.email, form.password, i18n.language);
       localStorage.setItem('needs_onboarding', '1');
       navigate('/onboarding');
     } catch (err) {
-      toast.error(err.response?.data?.error || t('errors.generic'));
+      const code = err.response?.data?.error;
+      const key = code ? `errors.${code}` : 'errors.generic';
+      const translated = t(key);
+      toast.error(translated === key ? t('errors.generic') : translated);
     } finally {
       setLoading(false);
     }
@@ -63,7 +66,7 @@ export default function Register() {
             </button>
           </form>
           <p style={{ fontSize: 11, color: '#7A7A9A', textAlign: 'center', marginTop: 16, fontFamily: 'Inter' }}>
-            By signing up you agree to our Terms and Privacy Policy.
+            {t('auth.agree_terms')} <Link to="/terms" style={{ color: '#7C6AF7', textDecoration: 'none' }}>{t('auth.terms_link')}</Link> {t('auth.agree_terms_and')} <Link to="/privacy" style={{ color: '#7C6AF7', textDecoration: 'none' }}>{t('auth.privacy_link')}</Link>.
           </p>
         </div>
       </motion.div>

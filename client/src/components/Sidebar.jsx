@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logo';
 import { LayoutDashboard, Search, Cpu, User, BookOpen, History, MessageSquare, Settings, LogOut } from 'lucide-react';
+import { PLAN_COLORS, PLAN_LABELS, PLAN_BG } from '../utils/planLimits';
 
 const nav = [
   { key: 'overview',  to: '/dashboard',          icon: LayoutDashboard },
@@ -14,10 +15,6 @@ const nav = [
   { key: 'coach',     to: '/dashboard/coach',     icon: MessageSquare },
   { key: 'settings',  to: '/dashboard/settings',  icon: Settings },
 ];
-
-const PLAN_COLORS  = { free: '#7A7A9A', rising: '#7C6AF7', elite: '#00E5A0', arc_master: '#FFD700' };
-const PLAN_LABELS  = { free: 'Free', rising: 'Rising', elite: 'Elite', arc_master: 'Arc Master' };
-const PLAN_BG      = { free: 'rgba(122,122,154,0.12)', rising: 'rgba(124,106,247,0.12)', elite: 'rgba(0,229,160,0.12)', arc_master: 'rgba(255,215,0,0.12)' };
 
 function Avatar({ name }) {
   const initials = name?.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase() || '?';
@@ -80,7 +77,7 @@ export default function Sidebar() {
           style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#7A7A9A', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, padding: '6px 4px', fontFamily: 'Inter', width: '100%', transition: 'color 0.15s' }}
           onMouseOver={e => e.currentTarget.style.color = '#EFEFEF'}
           onMouseOut={e => e.currentTarget.style.color = '#7A7A9A'}>
-          <LogOut size={15} /> Sair
+          <LogOut size={15} /> {t('dashboard.logout')}
         </button>
       </div>
     </aside>

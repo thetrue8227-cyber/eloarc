@@ -1,10 +1,11 @@
 const { query } = require('../db');
 
+// Free, Pawn ($7), Knight ($19), King ($49)
 const PLAN_LIMITS = {
-  free:       { analyses: 3,        chat: 0,   maxElo: 1200 },
-  rising:     { analyses: Infinity, chat: 20,  maxElo: 2200 },
-  elite:      { analyses: Infinity, chat: Infinity, maxElo: 2800 },
-  arc_master: { analyses: Infinity, chat: Infinity, maxElo: 3000 },
+  free:   { analyses: 3,        chat: 0,        maxElo: 1200 },
+  pawn:   { analyses: Infinity, chat: 0,        maxElo: 2000 },
+  knight: { analyses: Infinity, chat: 30,       maxElo: 2400 },
+  king:   { analyses: Infinity, chat: Infinity, maxElo: 2800 },
 };
 
 function currentMonth() {
@@ -35,6 +36,8 @@ async function checkAnalysisLimit(req, res, next) {
   if (usage.analyses_count >= limits.analyses) {
     return res.status(403).json({
       error: 'monthly_limit_reached',
+      plan,
+      limit: limits.analyses,
       message: `Your ${plan} plan allows ${limits.analyses} analyses per month.`,
     });
   }
@@ -58,7 +61,7 @@ async function checkChatLimit(req, res, next) {
   const limits = PLAN_LIMITS[plan] || PLAN_LIMITS.free;
 
   if (limits.chat === 0) {
-    return res.status(403).json({ error: 'plan_required', message: 'Chat requires Rising plan or higher.' });
+    return res.status(403).json({ error: 'plan_required', plan, message: 'Chat requires Knight plan or higher.' });
   }
   if (limits.chat === Infinity) return next();
 
@@ -66,6 +69,8 @@ async function checkChatLimit(req, res, next) {
   if (usage.chat_messages_count >= limits.chat) {
     return res.status(403).json({
       error: 'chat_limit_reached',
+      plan,
+      limit: limits.chat,
       message: `Your ${plan} plan allows ${limits.chat} chat messages per month.`,
     });
   }
@@ -87,7 +92,7 @@ async function incrementChat(userId) {
 function requirePlan(...plans) {
   return (req, res, next) => {
     if (!plans.includes(req.user.plan)) {
-      return res.status(403).json({ error: 'plan_required', message: `This feature requires: ${plans.join(' or ')}` });
+      return res.status(403).json({ error: 'plan_required', plan: req.user.plan, requires: plans, message: `This feature requires: ${plans.join(' or ')}` });
     }
     next();
   };

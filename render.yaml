@@ -16,11 +16,13 @@ services:
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
-      - key: STRIPE_PRICE_RISING
+      - key: STRIPE_PRICE_PAWN
         sync: false
-      - key: STRIPE_PRICE_ELITE
+      - key: STRIPE_PRICE_KNIGHT
         sync: false
-      - key: STRIPE_PRICE_ARC_MASTER
+      - key: STRIPE_PRICE_KING
+        sync: false
+      - key: CLIENT_URL
         sync: false
       - key: JWT_SECRET
         generateValue: true
